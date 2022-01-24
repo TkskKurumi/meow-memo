@@ -5,7 +5,7 @@ import re
 from .files import update_data
 
 
-def _():
+def run():
     sess = requests.session()
     lic = sess.get(
         r"https://github.com/vinta/awesome-python/raw/master/LICENSE")
@@ -16,15 +16,15 @@ def _():
     t = content.text
     pattern = r"\* \[([\s\S]+?)\]\((http.+?)\)([\s\S]*?)[\r\n]"
     fa = re.findall(pattern, t)
-    print(fa[0])
+    # print(fa[0])
     for name, url, desc in fa:
         if(desc.startswith(" - ")):
             content = "\n".join([desc[3:], url])
         else:
             content = "%s: %s"%(name, url)
         update_data(name, content)
-        print(name)
+        print('"',name,'"',end=" ",sep="")
 
 
 if(__name__ == '__main__'):
-    _()
+    run()
