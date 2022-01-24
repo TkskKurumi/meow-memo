@@ -8,12 +8,14 @@ subcommands = dict()
 def deco(func):
     subcommands[func.__name__] = func
 
+
 @deco
 def help(argdict):
     print("meow add [key] [value]")
     print("\tto add [key] 's memo")
     print("meow edit [key]")
-    print("\tto open an editor for [key], tool will try invoke vscode, nano, gvim.")
+    print(
+        "\tto open an editor for [key], tool will try invoke vscode, nano, gvim.")
     print("meow [key]")
     print("\tto search memo for key")
 
@@ -29,7 +31,7 @@ def do_search(key, first=0.2):
     for k, v in files.datas.items():
         common = algorithms.lcs(key, k)
         # v_common_len, v_common_str = algorithms.lcs(key, v)
-        
+
         score = common.common_ratio
         results.append((score, k, v, common))
     results.sort(key=lambda x: -x[0])    # sort by score descending
@@ -38,11 +40,11 @@ def do_search(key, first=0.2):
         score, k, v, common = i
         colored_key, colored_k = common.color_common()
         print(colored_key, "->", colored_k, ":")
-        
+
         for i in v.split("\n"):
             print("    ", i, sep="")
-        sum_score-=score
-        if(sum_score<0):
+        sum_score -= score
+        if(sum_score < 0):
             break
     return
 
@@ -59,6 +61,8 @@ def edit(argdict):
     value = ioutil.input_with_editor(value)
     update_data(key, value)
     do_search(key, first=0)
+
+
 @deco
 def add(argdict):
     _args = argdict.get("positional")
@@ -68,6 +72,20 @@ def add(argdict):
     update_data(key, value)
     do_search(key, first=0)
 
+
+@deco
+def app(argdict):
+    _args = argdict.get("positional")
+    cmd = _args[0]   # "app"
+    key = _args[1]   # key
+    value = _args[2]  # value
+    v = files.datas.get(key, "")
+    if(v):
+        v = v+"\n"+value
+    else:
+        v = value
+    update_data(key, v)
+    do_search(key, first=0)
 
 @deco
 def search(argdict):
