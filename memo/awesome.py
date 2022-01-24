@@ -5,7 +5,8 @@ import re
 from .files import update_data
 
 
-def run():
+def run(argdict):
+    v=argdict.get("verbose") or argdict.get("v")
     sess = requests.session()
     lic = sess.get(
         r"https://github.com/vinta/awesome-python/raw/master/LICENSE")
@@ -23,7 +24,8 @@ def run():
         else:
             content = "%s: %s"%(name, url)
         update_data(name, content)
-        print('"',name,'"',end=" ",sep="")
+        if(v):
+            print('"',name,'"',end=" ",sep="")
 
 
 if(__name__ == '__main__'):

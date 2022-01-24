@@ -116,4 +116,4 @@ def search(argdict):
 @deco
 def awesome(argdict):
     from . import awesome
-    awesome.run()
+    awesome.run(argdict)
