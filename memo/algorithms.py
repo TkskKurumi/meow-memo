@@ -8,7 +8,7 @@ def _color_common(a, common, fore="RED"):
     idx = 0
     ret = []
     for ch in a:
-        if(idx < len(common) and common[idx] == ch):
+        if(idx < len(common) and common[idx].lower() == ch.lower()):
             ret.append(str(colored(ch, fore=fore)))
             idx += 1
         else:
@@ -30,7 +30,9 @@ class lcs:
         dp_from = ndarray((n, m), (-1, -1))
         for i in range(n):
             for j in range(m):
-                if(A[i] == B[j]):
+                '''if(A[i] in 'Aa' and B[j] in 'Aa' and A[i]!=B[j]):
+                    print(A[i],B[j],A[i].lower() == B[j].lower())'''
+                if(A[i].lower() == B[j].lower()):
                     if(i and j):
                         dp[i][j] = dp[i-1][j-1]+1
                     else:
@@ -55,7 +57,7 @@ class lcs:
         u, v = n-1, m-1
         common = []
         while(u >= 0 and v >= 0):
-            if(A[u] == B[v]):
+            if(A[u].lower() == B[v].lower()):
                 common.append(A[u])
             u, v = dp_from[u][v]
         common = common[::-1]
@@ -67,7 +69,7 @@ class lcs:
         self.common_ratio=self.common_ratio_a*self.common_ratio_b
     def color_common(self,foreA="RED",foreB="GREEN"):
         return _color_common(self.A,self.common,foreA),_color_common(self.B,self.common,foreB)
-
+    
 
 def ndarray(dims, fill=0):
     if(len(dims) == 1):

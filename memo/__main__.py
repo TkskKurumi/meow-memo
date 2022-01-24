@@ -19,7 +19,7 @@ def run(args=None):
     elif(argdict.get('positional')):
         _args = argdict['positional']
         subcmd = _args[0]
-        if(subcmd in ["edit", "add", "app"]):
+        if(subcmd in ["edit", "add", "app", "awesome"]):
             subcommand = subcmd
         else:
             subcommand = "search"

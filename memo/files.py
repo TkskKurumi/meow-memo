@@ -10,5 +10,7 @@ datas = savedDict.open(path.join(pth, "datas.json"))
 times = savedDict.open(path.join(pth, "timestamp.json"))
 
 
-
+def update_data(key, value):
+    datas[key] = value
+    times[key] = time.time()
 
