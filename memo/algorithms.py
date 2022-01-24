@@ -1,6 +1,5 @@
 # algorithms
 
-from tkinter import E
 from .util import colored
 from dataclasses import dataclass
 import re
@@ -42,7 +41,7 @@ def _eq(a, b):
 
 def _element_similarity(a, b):
     if(isinstance(a, str) and isinstance(b, str)):
-        if(len(a) > 4 and len(b) > 4):
+        if(len(a) >= 4 and len(b) >= 4):
             return lcs(a, b).common_ratio
         else:
             return 1 if a.lower() == b.lower() else 0

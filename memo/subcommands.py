@@ -32,11 +32,14 @@ def do_search(key, first=0.15, argdict=None):
     key_len = len(key)
     results = []
     for k, v in files.datas.items():
-        common = algorithms.lcs(key, k)
+        if(len(key)>10 or len(k)>10):
+            common = algorithms.lcs(split_paragraph(key), split_paragraph(k))
+        else:
+            common = algorithms.lcs(key, k)
         # v_common_len, v_common_str = algorithms.lcs(key, v)
         common_v = algorithms.lcs(split_paragraph(key), split_paragraph(v))
-        score = common.common_ratio*0.5 + common_v.common_len*0.5
-        score = score
+        score = common.common_len + common_v.common_len*0.2
+        score = score**2
         results.append((score, k, v, common, common_v))
     results.sort(key=lambda x: -x[0])    # sort by score descending
     sum_score = sum([x[0] for x in results])*first
