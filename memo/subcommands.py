@@ -3,6 +3,7 @@ import time
 from . import algorithms
 from . import ioutil
 from .files import update_data
+import re
 subcommands = dict()
 
 
@@ -23,16 +24,29 @@ def help(argdict):
     print("meow awesome")
     print("    to fetch awesome-python memos")
 
-
-def do_search(key, first=0.15):
+def split_paragraph(s):
+    pattern=r"[\n \t\r]"
+    spliter=re.findall(pattern,s)
+    splited=re.split(pattern,s)
+    ret=[]
+    # print(spliter)
+    # print(splited)
+    for idx,i in enumerate(splited):
+        if(idx):
+            ret.append(spliter[idx-1])
+        ret.append(i)
+    return ret
+def do_search(key, first=0.15, argdict=None):
+    if(argdict is None):
+        argdict = dict()
     key_len = len(key)
     results = []
     for k, v in files.datas.items():
         common = algorithms.lcs(key, k)
         # v_common_len, v_common_str = algorithms.lcs(key, v)
-        common_v = algorithms.lcs(key, v)
-        score = common.common_ratio*0.8 + common_v.common_ratio*0.2
-        score = score**2
+        common_v = algorithms.lcs(split_paragraph(key), split_paragraph(v))
+        score = common.common_ratio*0.5 + common_v.common_len*0.5
+        score = score
         results.append((score, k, v, common, common_v))
     results.sort(key=lambda x: -x[0])    # sort by score descending
     sum_score = sum([x[0] for x in results])*first
@@ -43,6 +57,10 @@ def do_search(key, first=0.15):
         _, colored_v = common_v.color_common(foreB="BLUE")
         for i in colored_v.split("\n"):
             print("    ", i, sep="")
+        
+        if(argdict.get("debug")):
+            print(common.common_ratio,common_v.common_ratio,common_v.common_len)
+        print()
         sum_score -= score
         if(sum_score < 0):
             break
@@ -92,7 +110,8 @@ def app(argdict):
 def search(argdict):
     _args = argdict.get("positional")
     key = " ".join(_args)
-    do_search(key)
+    do_search(key, argdict=argdict)
+
 
 @deco
 def awesome(argdict):

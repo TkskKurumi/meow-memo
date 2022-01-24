@@ -1,19 +1,32 @@
 # algorithms
 
+from numpy import isin
 from .util import colored
 from dataclasses import dataclass
+
+
+def _eq(a, b):
+    if(isinstance(a, str) and isinstance(b, str)):
+        if(len(a)>4 and len(b)>4):
+            rate=lcs(a,b).common_ratio
+            return rate>0.7
+        else:
+            return a.lower() == b.lower()
+    else:
+        return a == b
 
 
 def _color_common(a, common, fore="RED"):
     idx = 0
     ret = []
     for ch in a:
-        if(idx < len(common) and common[idx].lower() == ch.lower()):
+        if(idx < len(common) and _eq(common[idx], ch.lower())):
             ret.append(str(colored(ch, fore=fore)))
             idx += 1
         else:
             ret.append(ch)
     return ''.join(ret)
+
 
 @dataclass
 class lcs:
@@ -23,6 +36,8 @@ class lcs:
     common_ratio_a: float
     common_ratio_b: float
     common_ratio: float
+    common_len: int
+
     def __init__(self, A, B):
         n = len(A)
         m = len(B)
@@ -32,7 +47,8 @@ class lcs:
             for j in range(m):
                 '''if(A[i] in 'Aa' and B[j] in 'Aa' and A[i]!=B[j]):
                     print(A[i],B[j],A[i].lower() == B[j].lower())'''
-                if(A[i].lower() == B[j].lower()):
+
+                if(_eq(A[i], B[j])):
                     if(i and j):
                         dp[i][j] = dp[i-1][j-1]+1
                     else:
@@ -57,19 +73,21 @@ class lcs:
         u, v = n-1, m-1
         common = []
         while(u >= 0 and v >= 0):
-            if(A[u].lower() == B[v].lower()):
+            if(_eq(A[u], B[v])):
                 common.append(A[u])
             u, v = dp_from[u][v]
         common = common[::-1]
-        self.A=A
-        self.B=B
-        self.common=common  # list
-        self.common_ratio_a=len(common)/len(A)
-        self.common_ratio_b=len(common)/len(B)
-        self.common_ratio=self.common_ratio_a*self.common_ratio_b
-    def color_common(self,foreA="RED",foreB="GREEN"):
-        return _color_common(self.A,self.common,foreA),_color_common(self.B,self.common,foreB)
-    
+        self.A = A
+        self.B = B
+        self.common = common  # list
+        self.common_ratio_a = len(common)/len(A)
+        self.common_ratio_b = len(common)/len(B)
+        self.common_ratio = self.common_ratio_a*self.common_ratio_b
+        self.common_len = len(common)
+
+    def color_common(self, foreA="RED", foreB="GREEN"):
+        return _color_common(self.A, self.common, foreA), _color_common(self.B, self.common, foreB)
+
 
 def ndarray(dims, fill=0):
     if(len(dims) == 1):
@@ -79,9 +97,9 @@ def ndarray(dims, fill=0):
         return [ndarray(dims[1:], fill=fill) for i in range(dims[0])]
 
 
-
-if(__name__=='__main__'):
-    tmp=lcs("fuck",'ucl')
+if(__name__ == '__main__'):
+    tmp = lcs("fuck", 'ucl')
     print(tmp)
-    print(lcs([1,1,4,5,1,4],[1,9,1,9,8,1,0]))
+    print(lcs([1, 1, 4, 5, 1, 4], [1, 9, 1, 9, 8, 1, 0]))
     print(*tmp.color_common())
+    print(*lcs('what the fuck'.split(), "fuck you".split()).color_common())
