@@ -4,6 +4,7 @@ from . import algorithms
 from . import ioutil
 from .files import update_data
 import re
+from .algorithms import split_paragraph
 subcommands = dict()
 
 
@@ -24,18 +25,7 @@ def help(argdict):
     print("meow awesome")
     print("    to fetch awesome-python memos")
 
-def split_paragraph(s):
-    pattern=r"[\n \t\r]"
-    spliter=re.findall(pattern,s)
-    splited=re.split(pattern,s)
-    ret=[]
-    # print(spliter)
-    # print(splited)
-    for idx,i in enumerate(splited):
-        if(idx):
-            ret.append(spliter[idx-1])
-        ret.append(i)
-    return ret
+
 def do_search(key, first=0.15, argdict=None):
     if(argdict is None):
         argdict = dict()
@@ -59,7 +49,9 @@ def do_search(key, first=0.15, argdict=None):
             print("    ", i, sep="")
         
         if(argdict.get("debug")):
-            print(common.common_ratio,common_v.common_ratio,common_v.common_len)
+            print(*common.color_common(),sep="  <-->  ")
+            print(common.b_matched)
+            print(common.common)
         print()
         sum_score -= score
         if(sum_score < 0):
