@@ -12,12 +12,13 @@ def deco(func):
 @deco
 def help(argdict):
     print("meow add [key] [value]")
-    print("\tto add [key] 's memo")
+    print("    to add (overwrite) [key] 's memo ")
+    print("meow app [key] [value]")
+    print("    to append a line to the end of  [key] 's memo")  # nopep8
     print("meow edit [key]")
-    print(
-        "\tto open an editor for [key], tool will try invoke vscode, nano, gvim.")
+    print("    to open an editor for [key], tool will try invoke vscode, nano, gvim.")    # nopep8
     print("meow [key]")
-    print("\tto search memo for key")
+    print("    to search memo for key")
 
 
 def update_data(key, value):
@@ -86,6 +87,7 @@ def app(argdict):
         v = value
     update_data(key, v)
     do_search(key, first=0)
+
 
 @deco
 def search(argdict):
