@@ -1,7 +1,5 @@
 # algorithms
 
-from numpy import isin
-
 from .ioutil import splitedDict
 from .util import colored
 from dataclasses import dataclass, asdict
