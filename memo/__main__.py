@@ -11,8 +11,8 @@ from .subcommands import subcommands
 
 def run(args=None):
     if(args is None):
-        args = sys.argv
-    argdict = argparser.parse_args(args[1:])
+        args = sys.argv[1:]
+    argdict = argparser.parse_args(args)
     subcommand = 'help'
     if(not argdict):
         subcommand = 'help'
