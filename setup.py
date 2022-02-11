@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="meow-memo",
-    version="0.0.9",
+    version="0.0.10",
     description="Quick memo",
     author="TkskKurumi",
     maintainer="TkskKurumi",
