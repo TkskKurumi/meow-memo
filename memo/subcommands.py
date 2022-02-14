@@ -4,6 +4,7 @@ from . import algorithms
 from . import ioutil
 from .files import update_data
 import re
+import time
 from .algorithms import split_paragraph
 subcommands = dict()
 
@@ -29,15 +30,34 @@ def help(argdict):
 def do_search(key, first=0.15, argdict=None):
     if(argdict is None):
         argdict = dict()
+    _debug = argdict.get("debug")
+    _use_cache = argdict.get("use_cache")
+    if(_debug):
+        algorithms._debug = True
+    if(_use_cache):
+        if(isinstance(_use_cache, list)):
+            _use_cache = _use_cache[0]
+            if(_use_cache.lower()[0] == 't'):
+                algorithms._use_cache = True
+            elif(_use_cache.lower()[0] == 'f'):
+                algorithms._use_cache = False
+        else:
+            algorithms._use_cache = _use_cache
+        
+    start_time = time.time()
     key_len = len(key)
     results = []
     for k, v in files.datas.items():
-        if(len(key)>10 or len(k)>10):
+        if(len(key) > 10 or len(k) > 10):
             common = algorithms.lcs(split_paragraph(key), split_paragraph(k))
         else:
             common = algorithms.lcs(key, k)
         # v_common_len, v_common_str = algorithms.lcs(key, v)
-        common_v = algorithms.lcs(split_paragraph(key), split_paragraph(v))
+        sb = "%s@%s" % (k, files.times[k])
+        common_v = algorithms.lcs(
+            split_paragraph(key),
+            split_paragraph(v),
+            simple_B=sb)
         score = common.common_len + common_v.common_len*0.2
         score = score**2
         results.append((score, k, v, common, common_v))
@@ -50,15 +70,16 @@ def do_search(key, first=0.15, argdict=None):
         _, colored_v = common_v.color_common(foreB="BLUE")
         for i in colored_v.split("\n"):
             print("    ", i, sep="")
-        
+
         if(argdict.get("debug")):
-            print(*common.color_common(),sep="  <-->  ")
+            print(*common.color_common(), sep="  <-->  ")
             print(common.b_matched)
             print(common.common)
         print()
         sum_score -= score
         if(sum_score < 0):
             break
+    print("finished search in %.1f seconds" % (time.time()-start_time))
     return
 
 

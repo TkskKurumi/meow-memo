@@ -2,6 +2,7 @@ from os import path
 import os
 import json
 from . import paths
+from .myhash import base32
 
 
 class savedDict(dict):
@@ -42,6 +43,51 @@ class savedDict(dict):
         self.f.close()
 
 
+class splitedDict:
+    # split large dict into multi file
+    opened = dict()
+
+    def open(pth):
+        if(pth in splitedDict.opened):
+            return splitedDict.opened[pth]
+        else:
+            ret = splitedDict(pth)
+            splitedDict.opened[pth] = ret
+            return ret
+
+    def __init__(self, pth, hash_func=lambda x: base32(x, length=2)):
+        self.pth = pth
+        self.hash_func = hash_func
+
+    def get_path(self, key):
+        skey = self.hash_func(key)
+        return path.join(self.pth, '%s.json' % skey)
+
+    def save_part(self, key):
+        D = savedDict.open(self.get_path(key))
+        D._save()
+
+    def __setitem__(self, key, value):
+        D = savedDict.open(self.get_path(key))
+        D[key] = value
+
+    def __getitem__(self, key):
+        D = savedDict.open(self.get_path(key))
+        return D[key]
+
+    def get(self, key, value=None):
+        D = savedDict.open(self.get_path(key))
+        return D.get(key, value)
+
+    def __contains__(self, key):
+        pth = self.get_path(key)
+        if(path.exists(pth)):
+            D = savedDict.open(pth)
+            return key in D
+        else:
+            return False
+
+
 all_editors = ["code --wait", "nano", "gvim"]
 
 
@@ -72,14 +118,15 @@ def input_with_editor(default=""):
             while(not path.exists(filename)):
                 print("Please save file after you input")
                 retCode = os.system("%s %s" % (editor, filename))
-            ret=read_file(filename)
+            ret = read_file(filename)
             break
     if(not has_available_editor):
         raise OSError(retCode)
     return ret
 
+
 if(__name__ == '__main__'):   # for test only
     a = savedDict(r"C:\Users\xiaofan\Downloads\tmp.json")
     a['k'] = "v"
-    
+
     print(input_with_editor("edit something"))
